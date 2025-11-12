@@ -430,6 +430,24 @@ static inline bf16_t bf16_div(bf16_t a, bf16_t b)
                              (quotient & 0x7F)};
 }
 
+/* ============= UF8 Declaration ============= */
+
+extern int problemB_main(void);
+
+
+static void test_problemB(void)
+{
+    int pass = problemB_main();
+    if (pass) {
+        TEST_LOGGER("ProblemB: PASSED\n");
+    } else {
+        TEST_LOGGER("ProblemB: FAILED\n");
+    }
+    return;
+}
+
+
+
 /* ============= ChaCha20 Declaration ============= */
 
 extern void chacha20(uint8_t *out,
@@ -438,6 +456,8 @@ extern void chacha20(uint8_t *out,
                      const uint8_t *key,
                      const uint8_t *nonce,
                      uint32_t ctr);
+
+
 
 /* ============= Test Suite ============= */
 
@@ -713,6 +733,24 @@ int main(void)
     print_dec((unsigned long) cycles_elapsed);
     TEST_LOGGER("  Instructions: ");
     print_dec((unsigned long) instret_elapsed);
+
+
+    /* Test 6: uf8 tests */
+
+    TEST_LOGGER("Test 6: uf8 tests\n");
+    start_cycles = get_cycles();
+    start_instret = get_instret();
+    test_problemB();
+    end_cycles = get_cycles();
+    end_instret = get_instret();
+    cycles_elapsed = end_cycles - start_cycles;
+    instret_elapsed = end_instret - start_instret;
+    TEST_LOGGER("  Cycles: ");
+    print_dec((unsigned long) cycles_elapsed);
+    TEST_LOGGER("  Instructions: ");
+    print_dec((unsigned long) instret_elapsed);
+
+
 
     TEST_LOGGER("\n=== All Tests Completed ===\n");
 

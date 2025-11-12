@@ -1,12 +1,14 @@
 include ../../../mk/toolchain.mk
 
-ARCH = -march=rv32izicsr
+ARCH := -march=rv32i_zicsr -mabi=ilp32
 LINKER_SCRIPT = linker.ld
 
 EMU ?= ../../../build/rv32emu
 
+OPT ?= -Ofast
+
 AFLAGS = -g $(ARCH)
-CFLAGS = -g -march=rv32i_zicsr
+CFLAGS = -g $(ARCH) $(OPT)
 LDFLAGS = -T $(LINKER_SCRIPT)
 EXEC = test.elf
 
@@ -15,7 +17,7 @@ AS = $(CROSS_COMPILE)as
 LD = $(CROSS_COMPILE)ld
 OBJDUMP = $(CROSS_COMPILE)objdump
 
-OBJS = start.o main.o perfcounter.o chacha20_asm.o
+OBJS = start.o main_C.o perfcounter.o 
 
 .PHONY: all run dump clean
 
@@ -37,7 +39,8 @@ run: $(EXEC)
 	$(EMU) $<
 
 dump: $(EXEC)
-	$(OBJDUMP) -Ds $< | less
+	$(OBJDUMP) -d -S $(EXEC) > dump.S
+	@echo "Disassembly -> dump.S (OPT=$(OPT))"
 
 clean:
 	rm -f $(EXEC) $(OBJS)
