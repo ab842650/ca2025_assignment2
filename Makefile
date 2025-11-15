@@ -5,7 +5,7 @@ LINKER_SCRIPT = linker.ld
 
 EMU ?= ../../../build/rv32emu
 
-OPT ?= -Ofast
+OPT ?= -O0
 
 AFLAGS = -g $(ARCH)
 CFLAGS = -g $(ARCH) $(OPT)
@@ -17,7 +17,7 @@ AS = $(CROSS_COMPILE)as
 LD = $(CROSS_COMPILE)ld
 OBJDUMP = $(CROSS_COMPILE)objdump
 
-OBJS = start.o main_C.o perfcounter.o 
+OBJS = start.o main_C.o perfcounter.o rsqrt_fast.o
 
 .PHONY: all run dump clean
 

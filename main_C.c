@@ -208,17 +208,26 @@ static inline uint32_t newton_step_q16_inline(uint32_t y, uint32_t x)
     uint32_t y2_hi, y2_lo;
     mul32x32(y, y, &y2_hi, &y2_lo);
 
+
+    
     // (x * y2_hi) << 16 → termA
     uint32_t hi1, lo1;
     mul32x32(x, y2_hi, &hi1, &lo1);
     uint32_t termA = (lo1 << 16);
 
+    
+
     // (x * y2_lo) >> 16 → termB
     uint32_t hi2, lo2;
     mul32x32(x, y2_lo, &hi2, &lo2);
+
+
     uint32_t termB = (hi2 << 16) | (lo2 >> 16);
 
     uint32_t xy2 = termA + termB;  // mod 2^32
+
+
+
     uint32_t term = (3u << 16) - xy2;
 
     // y * term → >>17
@@ -244,22 +253,24 @@ static uint32_t rsqrt(uint32_t x)
     uint32_t fraction = (exp >= 16) ? (x - (1u << exp)) >> (exp - 16)
                                     : (x - (1u << exp)) << (16 - exp);
 
-
     /* Linear interpolation */
     uint32_t y = y_base - (umul((y_base - y_next), fraction) >> 16);
 
+    
 
     y = newton_step_q16_inline(y, x);
 
     return y;
 }
 
+extern uint32_t rsqrt_fast(uint32_t x);
+
 int main(void)
 {
     uint64_t start_cycles = get_cycles();
     uint64_t start_instret = get_instret();
     for (int i = 0; i < 50; i++) {
-        uint32_t y = rsqrt(RSQRT_INPUTS[i]);
+        uint32_t y = rsqrt_fast(RSQRT_INPUTS[i]);
         print_hex(y);
     }
     uint64_t end_cycles = get_cycles();
